@@ -96,14 +96,15 @@ sectors = ['58 Uitgeverijen',
            '4791 Postorderbedrijven, webwinkels',
            ]
 
-# NLD_basic_macro_data_01 = macro_data_cbs_01(identifier = '85828NED', sectors=sectors, verbose = False)
-# NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=";")
+NLD_basic_macro_data_01 = macro_data_cbs_01(identifier = '85828NED', sectors=sectors, verbose = False)
+NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=";")
 
 ##############################################################
 ##############################################################
 ##############################################################
 
 # https://opendata.cbs.nl/#/CBS/nl/dataset/85806NED/table?ts=1723801117092
+
 
 def macro_data_cbs_02(identifier, sectors, verbose = False):
     start_date = '01/01/2005'
@@ -130,12 +131,12 @@ def macro_data_cbs_02(identifier, sectors, verbose = False):
     # select the data needed, note that the periods are quarters and the oncorrected values are returned
     data1 = data[data['BedrijfstakkenBranchesSBI2008'].isin(sectors)]
     data2 = data1[data1['Perioden'].str.contains("kwartaal")]
-    data3 = data2[['Perioden', 'BedrijfstakkenBranchesSBI2008', 'OmzetBinnenland_5']]
+    data3 = data2[['Perioden', 'BedrijfstakkenBranchesSBI2008', 'TotaleOmzet_4']]
 
     # reshape data
     data4 = data3.pivot(index = "Perioden",
           columns = "BedrijfstakkenBranchesSBI2008",
-          values = 'OmzetBinnenland_5'
+          values = 'TotaleOmzet_4'
           )
 
     # add a date index 
@@ -145,6 +146,7 @@ def macro_data_cbs_02(identifier, sectors, verbose = False):
 
 sectors = [ '10 Voedingsmiddelenindustrie', 
             '11 Drankenindustrie',
+            # Tabaksindustrie is empty
             '12 Tabaksindustrie',
             '13 Textielindustrie',
             '14 Kledingindustrie',
@@ -226,8 +228,8 @@ sectors = [ '41 Algemene bouw en projectontwikkeling',
             '43 Gespecialiseerde bouw'
             ]
 
-# NLD_basic_macro_data_03 = macro_data_cbs_03(identifier = '85809NED', sectors=sectors, verbose = True)
-# NLD_basic_macro_data_03.to_csv("tmp113.csv", sep=";")
+NLD_basic_macro_data_03 = macro_data_cbs_03(identifier = '85809NED', sectors=sectors, verbose = True)
+NLD_basic_macro_data_03.to_csv("tmp113.csv", sep=";")
 
 ##############################################################
 ##############################################################
@@ -279,18 +281,18 @@ def macro_data_cbs_04(identifier, sectors, verbose = False):
 sectors = [ '75 Veterinaire dienstverlening' 
             ]
 
-# NLD_basic_macro_data_04 = macro_data_cbs_04(identifier = '83854NED', sectors=sectors, verbose = True)
-# NLD_basic_macro_data_04.to_csv("tmp114.csv", sep=";")
+NLD_basic_macro_data_04 = macro_data_cbs_04(identifier = '83854NED', sectors=sectors, verbose = True)
+NLD_basic_macro_data_04.to_csv("tmp114.csv", sep=";")
 
 ################################################
 ################################################
 ################################################
 
-# data_frames = [NLD_basic_macro_data_01, NLD_basic_macro_data_02, NLD_basic_macro_data_03, NLD_basic_macro_data_04]
-# dx1 = pd.concat(data_frames, axis='columns')
+data_frames = [NLD_basic_macro_data_01, NLD_basic_macro_data_02, NLD_basic_macro_data_03, NLD_basic_macro_data_04]
+dx1 = pd.concat(data_frames, axis='columns')
 
-# dx1.columns = [x.replace(" ", "_") for x in dx1.columns]
-# dx1.to_csv("data/allDataOmzet.csv", sep=";")
+dx1.columns = [x.replace(" ", "_") for x in dx1.columns]
+dx1.to_csv("data/allDataOmzet.csv", sep=";")
 
 
 
