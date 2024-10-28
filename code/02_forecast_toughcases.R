@@ -10,7 +10,7 @@ library(zoo)
 # Only take values from 2005 Q1 to 2024Q1
 
 # load data
-dt1 <- read.csv("data/allDataOmzet.csv", sep=";")
+dt1 <- read.csv("data/allDataOmzet.csv", sep = ";")
 
 ##### Start at 2005-01-01, replace missing values with best guess
 dt2 <- dt1[-c(1:20), -c(1)]
@@ -150,7 +150,7 @@ for (j in 0:18){
   
   } else {
 
-    for (i in 71:74){
+    for (i in 71:75){
 
       print(colNames[i])
       if (length(na.omit(localTrend[, i])) < 20) next
@@ -248,4 +248,13 @@ prtchangeDF <- prtchangeDF %>% select("Date", everything())
 write.csv(emptyDF, "emptyDF.csv")
 write.csv(allDataYearly, "allDataYearly.csv")
 
+
+colnames(prtchangeDF) <- gsub("X", "", colnames(prtchangeDF))
+colnames(prtchangeDF) <- gsub("_", " ", colnames(prtchangeDF))
+colnames(prtchangeDF) <- gsub("\\.", " ", colnames(prtchangeDF))
+prtchangeDF <- format(prtchangeDF, digits = 2)
 write.csv(prtchangeDF, "prtchangeDF.csv")
+
+
+
+

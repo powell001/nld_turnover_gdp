@@ -10,11 +10,9 @@ from functools import reduce
 # https://opendata.cbs.nl/#/CBS/nl/dataset/83837NED/table
 # https://opendata.cbs.nl/#/CBS/nl/dataset/85828NED/table?ts=1723788068156  ## Start Here ##
 
-
 def macro_data_cbs_01(identifier, sectors, verbose = False):
     start_date = '01/01/2000'
-    end_date = '07/01/2024'
-
+   
     if verbose:
         info = cbsodata.get_info(identifier)
         print(info)
@@ -44,7 +42,7 @@ def macro_data_cbs_01(identifier, sectors, verbose = False):
           )
 
     # add a date index 
-    data4.index = pd.date_range(start = start_date, end=end_date, freq = "Q").to_period('Q')
+    data4.index = pd.date_range(start = start_date, periods=data4.shape[0], freq = "Q").to_period('Q')
 
     return data4
 
@@ -94,10 +92,13 @@ sectors = ['58 Uitgeverijen',
            '4771 Winkels in kleding',
            '4772 Winkels in schoenen en lederwaren',
            '4791 Postorderbedrijven, webwinkels',
+           'Winkels in meubels, woninginrichting alg'
            ]
 
 NLD_basic_macro_data_01 = macro_data_cbs_01(identifier = '85828NED', sectors=sectors, verbose = False)
 NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=";")
+
+# https://opendata.cbs.nl/statline/#/CBS/nl/dataset/85828NED/table?dl=AB888
 
 ##############################################################
 ##############################################################
@@ -146,7 +147,6 @@ def macro_data_cbs_02(identifier, sectors, verbose = False):
 
 sectors = [ '10 Voedingsmiddelenindustrie', 
             '11 Drankenindustrie',
-            # Tabaksindustrie is empty
             '12 Tabaksindustrie',
             '13 Textielindustrie',
             '14 Kledingindustrie',
