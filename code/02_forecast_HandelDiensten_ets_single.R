@@ -33,18 +33,19 @@ library(lmtest)
 
 
 ##########################
-# First smooth, if data is missing from the original "y" series, replace it
-# Only take values from 2005 Q1 to 2024Q1
 
 # load data
 dt1 <- read.csv("data/HandelDiensten_raw.csv", sep = ",")
 colnames(dt1)
 
-series1 <- ts(dt1["Winkels.in.meubels..woninginrichting.alg"], frequency = 12, start=c(2000,1))
-series1 <- ts(dt1["X4791.Postorderbedrijven..webwinkels"], frequency = 12, start=c(2000,1))
-# series1 <- ts(dt1['Winkels.in.meubels..woninginrichting.alg'], frequency = 12, start=c(2000,1))
+colName <- "X45.Autohandel.en..reparatie"
 
-plot(series1)
+# connects all the data
+Key1 <- paste(Sys.Date(), "_", colName, sep="")
+
+series1 <- ts(dt1[colName], frequency = 12, start=c(2000,1))
+series1 <- na.omit(series1)
+
 
 #########################
 # Which model to use
@@ -54,10 +55,10 @@ plot(series1)
 # Trend or not?
 ###########################
 
-result <- try(notrend_test(series1)$p.value)
-print(result)
+p_value <- try(notrend_test(series1)$p.value)
+print(p_value)
 
-if (is.numeric(result) == FALSE) {
+if (is.numeric(p_value) == FALSE) {
   print("assume: Has Trend")
   trendtype <- "A"
 } else {
@@ -118,16 +119,61 @@ print(seasontype)
 
 modelform <- str_c(c(errortype, trendtype, seasontype), collapse = "")
 
-paste("x","y",sep="")
-
 fit <- ets(series1, model=modelform, damped=FALSE)
 
 h1 <- 12
 train <- head(series1, round(length(series1) - h1))
 test <- tail(series1, h1)
 
-fit <- ets(train, model="MAM", damped=FALSE)
+fit <- ets(train, model=modelform, damped=FALSE)
 forecasted1 <- forecast(fit, h=h1)
 
+png(filename=paste("output/figures/", Key1, "TrainTestForecast.png", sep = "_"))
 autoplot(forecasted1, include=h1+24) + autolayer(test)
+dev.off()
 
+####################
+# final forecast
+####################
+fit <- ets(series1, model=modelform, damped=FALSE)
+forecast_oneMonth <- forecast(fit, h=1)
+
+png(filename=paste("output/figures/", Key1, "final_forecasts.png", sep = "_"))
+autoplot(tail(series1, 36)) + autolayer(forecast_oneMonth) + ggtitle(colName)
+dev.off()
+
+################################
+# Saving
+################################
+
+###
+# Raw Data
+###
+
+data <- data.frame(
+  SeriesName   = colName, 
+  DateAnalysis = Sys.Date(), 
+  ETSmodel = modelform,
+  ObservationDate = as.yearmon(time(series1)),
+  RawData = series1
+)
+data$Key1 <- Key1
+write.table(data, file = paste("output/forecasts/", Key1, "RawData.csv", sep="_"), sep =",",row.names = FALSE)
+
+###
+# TrainTestForecast
+###
+forecast_tibble <- as.data.frame(forecasted1)
+forecast_tibble$Key1 <- Key1 
+
+write.table(forecast_tibble, file = paste("output/forecasts/", Key1, "TrainTestForecast.csv", sep="_"), sep =",",row.names = FALSE)
+
+###
+# finalForecast
+###
+forecast_oneMonth <- forecast(fit, h=1)
+finalForecast <- as.data.frame(forecast_oneMonth, row.names = NULL)
+finalForecast$Key1 <- Key1
+finalForecast <- tibble::rownames_to_column(finalForecast, "Forecast_Period")  
+
+write.table(finalForecast, file = paste("output/forecasts/", Key1, "final_forecasts.csv", sep="_"), sep =",",row.names = FALSE)
