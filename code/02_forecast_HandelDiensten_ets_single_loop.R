@@ -35,7 +35,7 @@ library(lmtest)
 ##########################
 
 # load data
-dt1 <- read.csv("data/HandelDiensten_raw.csv", sep = ",")
+dt1 <- read.csv("data/HandelDiensten_raw1_2024_11_01.csv", sep = ",")
 colnames(dt1)
 dim(dt1)
 
@@ -267,7 +267,7 @@ combined$seriesDifferenced <- combined['RawData'] - lag(combined['RawData'], 12)
 combined$seriesDifferenced <- unlist(combined$seriesDifferenced)
 
 png(filename=paste("output/figures/", series_name, "differenced_forecasts.png", sep = "_"))
-plot(ts(combined[,c(2,4)], frequency = 12, start=c(2000,1)), main=y_name)
+plot(ts(combined[,c(2,4)], frequency = 12, start=c(2000,1)), main=series_name)
 dev.off()
 
 }
