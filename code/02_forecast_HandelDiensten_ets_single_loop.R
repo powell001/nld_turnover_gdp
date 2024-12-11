@@ -35,7 +35,7 @@ library(lmtest)
 ##########################
 
 # load data
-dt1 <- read.csv("data/HandelDiensten_raw1_2024_11_01.csv", sep = ",")
+dt1 <- read.csv("data/HandelDiensten_raw1_2024_12_11.csv", sep = ",")
 colnames(dt1)
 dim(dt1)
 

@@ -109,7 +109,6 @@ NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=";")
 
 def macro_data_cbs_02(identifier, sectors, verbose = False):
     start_date = '01/01/2005'
-    end_date = '07/01/2024'
 
     if verbose:
         info = cbsodata.get_info(identifier)
@@ -141,7 +140,7 @@ def macro_data_cbs_02(identifier, sectors, verbose = False):
           )
 
     # add a date index 
-    data4.index = pd.date_range(start = start_date, end=end_date, freq = "Q").to_period('Q')
+    data4.index = pd.date_range(start = start_date, periods=data4.shape[0], freq = "Q").to_period('Q')
 
     return data4
 
@@ -182,7 +181,6 @@ NLD_basic_macro_data_02.to_csv("tmp112.csv", sep=";")
 
 def macro_data_cbs_03(identifier, sectors, verbose = False):
     start_date = '01/01/2005'
-    end_date = '07/01/2024'
 
     if verbose:
         info = cbsodata.get_info(identifier)
@@ -219,7 +217,7 @@ def macro_data_cbs_03(identifier, sectors, verbose = False):
           )
 
     # add a date index 
-    data4.index = pd.date_range(start = start_date, end=end_date, freq = "Q").to_period('Q')
+    data4.index = pd.date_range(start = start_date, periods = data4.shape[0], freq = "Q").to_period('Q')
 
     return data4
 
@@ -240,7 +238,6 @@ NLD_basic_macro_data_03.to_csv("tmp113.csv", sep=";")
 
 def macro_data_cbs_04(identifier, sectors, verbose = False):
     start_date = '01/01/2005'
-    end_date = '01/01/2024'
 
     if verbose:
         info = cbsodata.get_info(identifier)
@@ -274,7 +271,7 @@ def macro_data_cbs_04(identifier, sectors, verbose = False):
           )
 
     # add a date index 
-    data4.index = pd.date_range(start = start_date, end=end_date, freq = "Q").to_period('Q')
+    data4.index = pd.date_range(start = start_date, periods = data4.shape[0], freq = "Q").to_period('Q')
 
     return data4
 

@@ -229,7 +229,7 @@ newforecastDF <-  as.data.frame(do.call(cbind, forecasts))
 colnames(newforecastDF) <- colnames(dt2)
 allData = rbind(emptyDF, newforecastDF)
 
-quarters <- seq(from = as.Date("2005/01/01"), to = as.Date("2026/04/01"), by ="quarter")
+quarters <- seq(from = as.Date("2005/01/01"), to = as.Date("2026/07/01"), by ="quarter")
 
 allData['Date'] <- quarters
 head(allData)

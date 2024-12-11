@@ -8,8 +8,8 @@ library(dlm)
 
 
 # load data
-dt1 <- read.csv("data/cbs_basic_macro_NOT_SEASONCORRECTED_qt.csv", sep=",", stringsAsFactors = FALSE)
-dt1$date <- as.Date(dt1$X)
+dt1 <- read.csv("data/a0_combinedQuarterly_extended_ETS.csv", sep=",", stringsAsFactors = FALSE)
+rownames(dt1) <- as.Date(dt1$X)
 # remove X column, may not be necessary
 dt1 <- dt1[,-c(1)]
 # reorder
