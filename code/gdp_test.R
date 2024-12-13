@@ -34,22 +34,22 @@ basicPlots <- function(dt1, colNames, rows1, cols1) {
     # for loop to produce basic figures put 4 figures on a page
     # can be modified to account for different sized dataframes, 
     # for now I just calculate by hand how many figures to produce
-    for (j in 0:2){
+    for (j in 0:8){
       png(paste("output/GDP/basic/plot_", j, ".png", sep = ""), res = 120, width = 1000, height = 800)
       par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
-      begin <- 1 + (j * 4)
+      begin <- 1 + (j * 4)  # number of plots per page is 4
       end   <- 4 + (j * 4)
 
-      if (begin <= 8) {
+      if (begin <= 50) {    # there are not 'leftover' columns to plot
 
         for (i in begin:end){
       
           mymain <- colNames[i]
+          if(is.na(mymain) == TRUE) {break}
 
           plot(ts(na.omit(dt1[, i]), frequency = 4, start = c(1995, 1)), main = mymain)
         }
-
         dev.off()
       } else {
 
@@ -107,8 +107,10 @@ kalmanSmoothing <- function(dt1){
       emptyDF[,i] <- y
   }    
   write.csv(emptyDF, "tmp.csv")
+
+  return(emptyDF)
 }
-kalmanSmoothing(dt1)
+emptyDF <- kalmanSmoothing(dt1)
 
 ###########################
 # KalmanSmoothing2 
@@ -117,20 +119,26 @@ kalmanSmoothing(dt1)
 kalmanSmoothing2 <- function(dt1){
   print("kalmanSmoothing2")
 
-  for (j in 0:2){
+  for (j in 0:7){
+    
     png(paste("output/GDP/kalman2/plot_", j, ".png", sep = ""), res = 100, width = 1000, height = 800)
+
     par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
     begin <- 1 + (j * 4)
     end   <- 4 + (j * 4)
 
-    if (begin <= 8) {
+    if (begin <= 50) {
     
       for (i in begin:end){
-      
+    
+
           mymain <- colNames[i]
           print(mymain)
-    
+
+          if(is.na(mymain) == TRUE) {break}
+          if(mymain=="Germany_GDP") {next}
+          
           y <- dt1[, i]
 
           # Model setting: local-trend model + seasonal model (time-domain approach)
@@ -143,7 +151,7 @@ kalmanSmoothing2 <- function(dt1){
 
           # Maximum likelihood estimation of parameters and confirmation of the results
           fit_dlm_y <- dlmMLE(y = y, parm = rep(0, 4), build = build_dlm_y)
-          fit_dlm_y
+         
 
           # Set the maximum likelihood estimates of parameters in the model
           mod <- build_dlm_y(fit_dlm_y$par)
@@ -163,10 +171,11 @@ kalmanSmoothing2 <- function(dt1){
           ts.plot(gamma, ylab = "Seasonal component")
           mtext(text = "Time", side = 1, line = 1, outer = TRUE)
           par(oldpar)
-
+          
           # Confirm the log-likelihood
           -dlmLL(y = y, mod = mod)
       }
+      dev.off()
     }  
   }
 }
@@ -190,14 +199,14 @@ kalmanPrediction <- function(localTrend){
   forecasts <- c()
   namesCols <- c()
 
-  for (j in 0:2){
+  for (j in 0:6){
     png(paste("output/GDP/kalman/plot_", j, ".png", sep = ""), res = 100, width = 1000, height = 800)
     par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
     begin <- 1 + (j * 4)
     end   <- 4 + (j * 4)
 
-    if (begin <= 8) {
+    if (begin <= 50) {
 
       for (i in begin:end){
         print(colNames[i])      
@@ -259,9 +268,7 @@ kalmanPrediction <- function(localTrend){
             col = "gray", # Grid line color
             lwd = 1)      # Grid line width
       }
-
       dev.off()
-    
     } else {
 
       for (i in 9){
@@ -345,19 +352,27 @@ HW1 <- function(localTrend){
 
   mygray <- "#80808080"
   dev.off()
-  for (j in 0:2){
+  for (j in 0:10){
     png(paste("output/GDP/HW/plot_", j, ".png", sep = ""), res = 100, width = 1000, height = 800)
     par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
     begin <- 1 + (j * 4)
     end   <- 4 + (j * 4)
 
-    if (begin <= 8) {
+    if (begin <= 500) {
 
       for (i in begin:end){
         print(i)
-        if (length(na.omit(localTrend[, i])) < 20) next
         mymain <- colNames[i]
+        print(mymain)
+        if(is.na(mymain) == TRUE) {break}
+        if(mymain=="Germany_GDP") {next}
+
+        if(is.na(mymain) == TRUE) {break}
+
+
+        if (length(na.omit(localTrend[, i])) < 20) next
+        
 
         test_data <- ts(na.omit(localTrend[, i]), frequency = 4, start = c(1995, 1))
 
@@ -372,6 +387,7 @@ HW1 <- function(localTrend){
             col.predicted = "red", lty.predicted = "dashed")
       }
       dev.off()
+
     } else {
 
       for (i in 9){
@@ -409,14 +425,14 @@ HW1(localTrend)
 
 library(dlm)
 
-for (j in 0:2){
+for (j in 0:8){
   png(paste("output/GDP/kalman2/plot_", j, ".png", sep = ""), res = 100, width = 1000, height = 800)
   par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
   begin <- 1 + (j * 4)
   end   <- 4 + (j * 4)
 
-  if (begin <= 8) {
+  if (begin <= 500) {
 
     for (i in begin:end){
       print(i)
@@ -479,9 +495,7 @@ for (j in 0:2){
           col = "gray", # Grid line color
           lwd = 1)      # Grid line width
     }
-
     dev.off()
-  
   } else {
 
     for (i in 9){
@@ -584,7 +598,7 @@ mod <- build_dlm_y(fit_dlm_y$par)
 dlmSmoothed_obj <- dlmSmooth(y = y, mod = mod)
 
 # Mean of the smoothing distribution
-   mu <- dropFirst(dlmSmoothed_obj$s[, 1])
+mu <- dropFirst(dlmSmoothed_obj$s[, 1])
 gamma <- dropFirst(dlmSmoothed_obj$s[, 3])
 
 # Plot results

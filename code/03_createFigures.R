@@ -130,7 +130,7 @@ for (j in 0:18){
 library(dlm)
 
 for (j in 0:18){
-  png(paste("output/Kalman/plot_", j, ".png", sep = ""))
+  png(paste("output/Kalman2/plot_", j, ".png", sep = ""))
   par(mfrow = c(3, 1), mar = c(3, 1, 1, 3))
 
   begin <- 1 + (j * 3)

@@ -96,7 +96,7 @@ sectors = ['58 Uitgeverijen',
            ]
 
 NLD_basic_macro_data_01 = macro_data_cbs_01(identifier = '85828NED', sectors=sectors, verbose = False)
-NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=";")
+NLD_basic_macro_data_01.to_csv("tmp111.csv", sep=",")
 
 # https://opendata.cbs.nl/statline/#/CBS/nl/dataset/85828NED/table?dl=AB888
 
@@ -171,7 +171,7 @@ sectors = [ '10 Voedingsmiddelenindustrie',
             ]
 
 NLD_basic_macro_data_02 = macro_data_cbs_02(identifier = '85806NED', sectors=sectors, verbose = True)
-NLD_basic_macro_data_02.to_csv("tmp112.csv", sep=";")
+NLD_basic_macro_data_02.to_csv("tmp112.csv", sep=",")
 
 ##############################################################
 ##############################################################
@@ -227,7 +227,7 @@ sectors = [ '41 Algemene bouw en projectontwikkeling',
             ]
 
 NLD_basic_macro_data_03 = macro_data_cbs_03(identifier = '85809NED', sectors=sectors, verbose = True)
-NLD_basic_macro_data_03.to_csv("tmp113.csv", sep=";")
+NLD_basic_macro_data_03.to_csv("tmp113.csv", sep=",")
 
 ##############################################################
 ##############################################################
@@ -279,7 +279,7 @@ sectors = [ '75 Veterinaire dienstverlening'
             ]
 
 NLD_basic_macro_data_04 = macro_data_cbs_04(identifier = '83854NED', sectors=sectors, verbose = True)
-NLD_basic_macro_data_04.to_csv("tmp114.csv", sep=";")
+NLD_basic_macro_data_04.to_csv("tmp114.csv", sep=",")
 
 ################################################
 ################################################
@@ -289,7 +289,7 @@ data_frames = [NLD_basic_macro_data_01, NLD_basic_macro_data_02, NLD_basic_macro
 dx1 = pd.concat(data_frames, axis='columns')
 
 dx1.columns = [x.replace(" ", "_") for x in dx1.columns]
-dx1.to_csv("data/allDataOmzet.csv", sep=";")
+dx1.to_csv("data/allDataOmzet.csv", sep=",")
 
 # allDataOmzet = pd.read_csv("data/allDataOmzet.csv",  index_col=[0], sep=";")
 # allDataOmzet.columns = [x.replace(" ", "_") for x in allDataOmzet.columns]
