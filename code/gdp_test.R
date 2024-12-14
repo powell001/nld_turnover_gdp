@@ -9,6 +9,9 @@ library(dlm)
 
 # load data
 dt1 <- read.csv("data/a0_combinedQuarterly_extended_ETS.csv", sep=",", stringsAsFactors = FALSE)
+
+dt1 <- dt1[c('X','BeloningSeizoengecorrigeerd_2', 'gdp_total', 'BeloningVanWerknemers_8')]
+
 rownames(dt1) <- as.Date(dt1$X)
 # remove X column, may not be necessary
 dt1 <- dt1[,-c(1)]
@@ -24,17 +27,20 @@ colNames <- colnames(dt1)
 # Number rows and columns
 rows1 <- dim(dt1)[1]
 cols1 <- dim(dt1)[2]
+numberSheets <- floor(cols1 / 4) 
 
 #####################################################################
 #####################################################################
 
-basicPlots <- function(dt1, colNames, rows1, cols1) {
+basicPlots <- function(dt1, numberSheets, colNames, rows1, cols1) {
     print("BasicPlots")
 
     # for loop to produce basic figures put 4 figures on a page
     # can be modified to account for different sized dataframes, 
     # for now I just calculate by hand how many figures to produce
-    for (j in 0:8){
+    for (j in 0:numberSheets){
+
+      print(j)  
       png(paste("output/GDP/basic/plot_", j, ".png", sep = ""), res = 120, width = 1000, height = 800)
       par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
@@ -42,6 +48,7 @@ basicPlots <- function(dt1, colNames, rows1, cols1) {
       end   <- 4 + (j * 4)
 
       if (begin <= 50) {    # there are not 'leftover' columns to plot
+        if(begin >= cols1) {break}
 
         for (i in begin:end){
       
@@ -67,7 +74,7 @@ basicPlots <- function(dt1, colNames, rows1, cols1) {
     }
 }    
 
-basicPlots(dt1, colNames, rows1, cols1)
+basicPlots(dt1, numberSheets, colNames, rows1, cols1)
 
 ###########################
 # KalmanSmoothing
@@ -81,6 +88,7 @@ kalmanSmoothing <- function(dt1){
 
   for (i in 1:cols1) {
       print(i)
+      print(colNames[i])
       y <- dt1[, i]
 
       # ######################################
@@ -97,12 +105,13 @@ kalmanSmoothing <- function(dt1){
 
       dlmSmoothed_obj <- dlmSmooth(y = y, mod = mod)
 
+
       # Find the mean and standard deviation of the smoothing distribution
-      s <- dropFirst(dlmSmoothed_obj$s)
+      mn <- dropFirst(dlmSmoothed_obj$mean)
 
       # which of the original data is missing, for example, sector: 11_Drankenindustrie
       replaceThese <- which(is.na(y))
-      y[replaceThese] <- s[replaceThese]
+      y[replaceThese] <- mn[replaceThese]
 
       emptyDF[,i] <- y
   }    
@@ -352,7 +361,7 @@ HW1 <- function(localTrend){
 
   mygray <- "#80808080"
   dev.off()
-  for (j in 0:10){
+  for (j in 0:7){
     png(paste("output/GDP/HW/plot_", j, ".png", sep = ""), res = 100, width = 1000, height = 800)
     par(mfrow = c(4, 1), mar = c(4, 1, 1, 4))
 
@@ -370,10 +379,8 @@ HW1 <- function(localTrend){
 
         if(is.na(mymain) == TRUE) {break}
 
-
         if (length(na.omit(localTrend[, i])) < 20) next
         
-
         test_data <- ts(na.omit(localTrend[, i]), frequency = 4, start = c(1995, 1))
 
         HW_test <- HoltWinters(test_data)
@@ -414,6 +421,7 @@ HW1 <- function(localTrend){
 }
 HW1(localTrend)
 
+write.csv(localTrend, "tmp_localTrend.csv")
 ######################################
 ## Local-trend model
 ######################################
