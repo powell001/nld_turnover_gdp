@@ -32,7 +32,7 @@ library(lmtest)
 #     MAM is multiplicative Holt-Winters with multiplicative errors.
 
 ####################################
-horizon1 <- 2
+horizon1 <- 12
 finalforecastHorizon <- 12
 ####################################
 
@@ -51,9 +51,9 @@ appropriateModels <- c("ANNX", "ANAX", "ANMX",
 ##########################
 
 # load data
-dt1 <- read.csv("data/a0_combinedQuarterly_extended_ARIMA.csv", sep=",", stringsAsFactors = FALSE)
+dt1 <- read.csv("data/HandelDiensten_raw1_2024_12_16.csv", sep=",", stringsAsFactors = FALSE)
 
-rownames(dt1) <- dt1$X
+rownames(dt1) <- dt1$Perioden
 
 colnames(dt1)
 dim(dt1)
@@ -65,9 +65,9 @@ data_columns <- allColumns[c(-1)]
 ##########################
 # ending date
 ##########################
-start_date <- "1995-01-01"
-mystart = c(1995,1)
-end_date <- "2024-04-01"
+start_date <- "2000-01-01"
+mystart = c(2000,1)
+end_date <- "2024-10-01"
 
 dt1 %>% filter(rownames(dt1) >= start_date &  rownames(dt1) <= end_date) -> dt1
 
@@ -85,7 +85,7 @@ for(colName in data_columns){
   # connects all the data
   Key1 <- paste(Sys.Date(), "_", colName, sep="")
 
-  series1 <- ts(dt1[colName], frequency = 4, start=mystart)
+  series1 <- ts(dt1[colName], frequency = 12, start=mystart)
   series1 <- na.omit(series1)
 
   #########################
@@ -298,11 +298,11 @@ geom_line()
 ###
 # Combine point forecast + entire series (using data above)
 ###
-combined$seriesDifferenced <- combined['RawData'] - lag(combined['RawData'], 4)
+combined$seriesDifferenced <- combined['RawData'] - lag(combined['RawData'], 12)
 combined$seriesDifferenced <- unlist(combined$seriesDifferenced)
 
 png(filename=paste("output/figures/", series_name, "differenced_forecasts.png", sep = "_"))
-plot(ts(combined[,c(2,4)], frequency = 4, start=c(2000,1)), main=series_name)
+plot(ts(combined[,c(2,4)], frequency = 12, start=c(2000,1)), main=series_name)
 dev.off()
 
 }
