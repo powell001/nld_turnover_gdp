@@ -17,6 +17,9 @@ library(seastests)
 library(car)
 library(lmtest)
 
+
+#Test
+
 # Time series plots
 # https://cran.rstudio.com/web/packages/ggfortify/vignettes/plot_ts.html
 
@@ -51,7 +54,7 @@ appropriateModels <- c("ANNX", "ANAX", "ANMX",
 ##########################
 
 # load data
-dt1 <- read.csv("data/HandelDiensten_raw1_2024_12_16.csv", sep=",", stringsAsFactors = FALSE)
+dt1 <- read.csv("data/HandelDiensten_raw1_2024_12_11.csv", sep=",", stringsAsFactors = FALSE)
 
 rownames(dt1) <- dt1$Perioden
 
@@ -225,10 +228,6 @@ for(colName in data_columns){
 
 } 
 
-
-
-
-
 ############# END LOOP ##############
 ############# END LOOP ##############
 ############# END LOOP ##############
@@ -266,43 +265,43 @@ files_FinalForecasts <- list.files("output/forecasts" , pattern = "final_forecas
 index <- 0
 for(fl in files_Raw) {
 
-index <- index + 1
+  index <- index + 1
 
-print(index)
+  print(index)
 
-# get raw data
-firstfile <- files_Raw[index]
-initial_df_raw <- read.csv(firstfile)
-tmp_raw <- initial_df_raw[,c(4,5)]
+  # get raw data
+  firstfile <- files_Raw[index]
+  initial_df_raw <- read.csv(firstfile)
+  tmp_raw <- initial_df_raw[,c(4,5)]
 
-series_name <- initial_df_raw[,c(1)][1]
+  series_name <- initial_df_raw[,c(1)][1]
 
-# get final forecasts
-firstfile <- files_FinalForecasts[index]
-initial_df_finalfore <- read.csv(firstfile)
-tmp_forecast <- initial_df_finalfore[,c(1,2)]
+  # get final forecasts
+  firstfile <- files_FinalForecasts[index]
+  initial_df_finalfore <- read.csv(firstfile)
+  tmp_forecast <- initial_df_finalfore[,c(1,2)]
 
-# copy column names
-colnames(tmp_forecast) <- colnames(tmp_raw)
-combined <- rbind(tmp_raw, tmp_forecast)
+  # copy column names
+  colnames(tmp_forecast) <- colnames(tmp_raw)
+  combined <- rbind(tmp_raw, tmp_forecast)
 
-# change to proper date
-combined$ObservationDate <- as.Date(paste(1, combined$ObservationDate), '%d %B %Y')
+  # change to proper date
+  combined$ObservationDate <- as.Date(paste(1, combined$ObservationDate), '%d %B %Y')
 
-# colors for different parts of line
-combined$mycolors <- c(rep('hist', length(combined[,1])-2), rep(c('forecast'),2))
+  # colors for different parts of line
+  combined$mycolors <- c(rep('hist', length(combined[,1])-2), rep(c('forecast'),2))
 
-ggplot(combined, aes(x =  ObservationDate, y = 'Raw', colour = mycolors, group = 1)) +
-geom_line()
+  ggplot(combined, aes(x =  ObservationDate, y = 'Raw', colour = mycolors, group = 1)) +
+  geom_line()
 
-###
-# Combine point forecast + entire series (using data above)
-###
-combined$seriesDifferenced <- combined['RawData'] - lag(combined['RawData'], 12)
-combined$seriesDifferenced <- unlist(combined$seriesDifferenced)
+  ###
+  # Combine point forecast + entire series (using data above)
+  ###
+  combined$seriesDifferenced <- combined['RawData'] - lag(combined['RawData'], 12)
+  combined$seriesDifferenced <- unlist(combined$seriesDifferenced)
 
-png(filename=paste("output/figures/", series_name, "differenced_forecasts.png", sep = "_"))
-plot(ts(combined[,c(2,4)], frequency = 12, start=c(2000,1)), main=series_name)
-dev.off()
+  png(filename=paste("output/figures/", series_name, "differenced_forecasts.png", sep = "_"))
+  plot(ts(combined[,c(2,4)], frequency = 12, start=c(2000,1)), main=series_name)
+  dev.off()
 
 }
