@@ -1,2 +1,11 @@
-[alias]
-    git config --global alias.add-commit '!git add -A && git commit'
+alias gs='git status'
+alias gd='git diff'
+alias gb='git branch'
+alias gchm='git checkout master'
+alias grbm='git pull origin master --rebase'
+alias gch='git checkout'
+alias gchb='git checkout -b'
+alias gac='git add . && git commit -m'
+alias gpl='git pull origin'
+alias gps='git push origin'
+alias gpsf='git push origin --force'
