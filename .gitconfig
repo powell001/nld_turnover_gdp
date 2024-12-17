@@ -1,0 +1,2 @@
+[alias]
+    git config --global alias.add-commit '!git add -A && git commit'
